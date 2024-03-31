@@ -12,6 +12,8 @@ To choose you will need to choose a level, you will see this in the documentatio
 Install libs: `pip install -r requirements.txt`
 Run the script `main.py`
 
+Read the help menu: `main.py -h`
+
 ## Levels
 
 Command with the 1st level (default): ```main.py -c 'cat /etc/passwd' -l 1```
@@ -27,4 +29,8 @@ Command with the 2nd level: ```main.py -c 'cat /etc/passwd' -l 2```
 
 Command with the 3yh level: ```main.py -c 'cat /etc/passwd' -l 3```
 - Run level 2
-- Encode the command into base64 or xxd.
+- Encode the command into base64, hex (xxd), rot13.
+
+## Output
+
+You can send the payloads into a file by using `-o` or `--output`: ```main.py -c 'cat /etc/passwd' -l 3 -o file_payloads_cmdinjection```
