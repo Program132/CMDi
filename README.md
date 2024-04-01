@@ -24,7 +24,7 @@ Command with the 1st level (default): ```main.py -c 'cat /etc/passwd' -l 1```
 Command with the 2nd level: ```main.py -c 'cat /etc/passwd' -l 2```
 - Execution of level 1
 - Add quotes like : `c'a't test`, `g"re"p mysql`.
-- Add capital letters / adding special characters (`@`, `$`) (LINUX ONLY) or (`^`) (WINDOWS ONLY): `cAT test`, `gREp mysql`, `gr@$ep mysql`. 
+- Add capital letters / adding special characters, `\ ` (`@$`) (LINUX ONLY) or (`^`) (WINDOWS ONLY): `cAT test`, `gREp mysql`, `gr@$ep mysql`. 
 
 
 Command with the 3yh level: ```main.py -c 'cat /etc/passwd' -l 3```
